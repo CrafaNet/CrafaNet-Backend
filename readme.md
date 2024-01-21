@@ -1,0 +1,1 @@
+Postman API Link: https://muradiye.postman.co/workspace/My-Workspace~014a2178-f9cb-49d2-86bb-7b2ac39a612d/collection/25492956-e672ac00-7cc9-4a2d-b74e-d76cf5256594?action=share&creator=25492956
