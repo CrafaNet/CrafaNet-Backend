@@ -39,7 +39,7 @@ const UserSchema = new Schema({
     }],
     // Kullanıcının kayıt olduğu tarih
     registerDate: {
-        type: String,
+        type: Date,
     },
     // Hesap doğrulama işlemi için kullanılacak olan veriler
     confirm: {

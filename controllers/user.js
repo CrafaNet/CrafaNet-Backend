@@ -4,29 +4,43 @@ const nodemailer = require('nodemailer');
 const User = require("../models/User");
 
 
-// Kullanıcı kayıt olma işlemi
+// Register işlemi için createUser ve sendConfirmCode apilerini birleştirdim ön yüzde ayrı ayrı değilde tek yerden istek atılsın diye
+exports.registerUser = async (req, res, next) => {
+    const status = await this.createUser(req, res);
+    console.log(status)
+    if (status.status == 200) {
+        this.sendConfirmCode(req, res)
+    } else {
+        const response = {
+            status: status.status,
+            message: status.msgError
+        };
+        return res.json(response);
+    }
+}
+
+// Kullanıcı kayıt olma işlemi 
 exports.createUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ phone: req.body.data.phone });
         if (existingUser) {
             const response = {
-                status: 201
+                status: 201,
+                message: "Bu telefon ile daha önce kayıt olunmuş. Giriş yapınız."
             };
-            return res.json(response);
+            return response;
         }
 
         const user = await User.create({
             ...req.body.data
         });
 
-        user.profilImg[0] = ''
-
         // Kullanıcının şifresini bcrypt ile şifrele
         bcrypt.hash(req.body.data.password, 10).then(function (hash) {
             user.password = hash
         });
 
-        const preToken = user.email
+        const preToken = user.phone
         const hashToken = await bcrypt.hash(preToken, 10);
         user.token = hashToken
         user.registerDate = Date.now()
@@ -34,36 +48,36 @@ exports.createUser = async (req, res) => {
 
         const response = {
             status: 200,
-            user
+            data: user
         };
-        return res.json(response);
+        return response;
     } catch (error) {
         console.log(error);
         const response = {
             status: 500,
-        };
-        return res.json(response);
+        };;
+        return response;
     }
 };
 
 // Kullanıcı giriş işlemi
 exports.loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body.data;
+        const { phone, password } = req.body.data;
         if (!phone || !password) {
             const response = {
                 status: 201,
             };
             return res.json(response);
         }
-        const user = await User.findOne({ email: email }).exec();
+        const user = await User.findOne({ phone: phone }).exec();
         if (user) {
             // Kullanıcının şifresini bcrypt ile karşılaştır
             const passwordMatch = await bcrypt.compare(password, user.password);
 
             if (passwordMatch) {
                 async function hashToken(req, user) {
-                    const preToken = user.email
+                    const preToken = user.phone
                     const hashToken = await bcrypt.hash(preToken, 10);
                     user.token = hashToken
                     await user.save()
@@ -71,7 +85,7 @@ exports.loginUser = async (req, res) => {
                 await hashToken(req, user)
                 const response = {
                     status: 200,
-                    user: user
+                    data: user
                 };
                 return res.json(response);
             } else {
@@ -87,8 +101,10 @@ exports.loginUser = async (req, res) => {
             return res.json(response);
         }
     } catch (error) {
+        console.log(error);
         const response = {
             status: 500,
+            eror: error
         };
         return res.json(response);
     }
@@ -117,7 +133,7 @@ exports.sendUserInfo = async (req, res) => {
     const user = await User.findOne({ token: req.body.data.token })
     const response = {
         status: 200,
-        user: user
+        data: user
     };
     return res.json(response);
 }
@@ -127,7 +143,7 @@ exports.updateUserInfo = async (req, res) => {
     const user = await User.findOneAndUpdate({ token: req.body.data.token }, { ...req.body.data }, { new: true })
     const response = {
         status: 200,
-        user: user
+        data: user
     };
     return res.json(response);
 };
@@ -146,10 +162,10 @@ exports.sendConfirmCode = async (req, res) => {
         await user.save()
 
         // SMS gönderme işlemi kullanıcıya
+        console.log('sms api daha bağlanmadı db ye kaydedildi.')
 
         res.status(200).json({
-            status: 200,
-            user: user
+            status: 200
         });
     } else {
         res.status(201).json({
@@ -161,17 +177,30 @@ exports.sendConfirmCode = async (req, res) => {
 // Kullanıcı doğrulama kodunu kontrol etme işlemi
 exports.checkConfirmCode = async (req, res) => {
     const user = await User.findOne({ phone: req.body.data.phone });
+    console.log(req.body.data)
+    console.log(user)
+    console.log(user.confirmCode, req.body.data.confirmCode)
+    if (user.confirm) {
+        const response = {
+            status: 202,
+            message: "Kullanıcı zaten doğrulanmış."
+        };
+        return res.json(response);
+    }
     if (req.body.data.confirmCode == user.confirmCode) {
         user.confirm = true
         user.confirmCode = ""
         await user.save()
         const response = {
             status: 200,
+            message: "Doğrulama başarılı.",
+            data: { token: user.token }
         };
         return res.json(response);
     } else {
         const response = {
             status: 201,
+            message: "Doğrulama kodu hatalı."
         };
         return res.json(response);
     }
@@ -191,7 +220,8 @@ exports.sendResetPasswordCode = async (req, res) => {
         // SMS gönderme işlemi kullanıcıya
 
         return res.status(200).json({
-            status: 200
+            status: 200,
+            data: { token: user.token }
         });
     } else {
         const response = {
@@ -223,6 +253,7 @@ exports.checkResetPasswordCode = async (req, res) => {
     }
     const response = {
         status: 500,
+        data: { token: user.token }
     };
     return res.json(response);
 }

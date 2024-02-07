@@ -41,6 +41,6 @@ app.use(
 const routes = require('./routes/main');
 app.use('/', routes);
 
-app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
-  console.log(`App is running on port ${process.env.PORT || 5000}`);
+app.listen(process.env.PORT || 5050, '0.0.0.0', () => {
+  console.log(`App is running on port ${process.env.PORT || 5050}`);
 });
