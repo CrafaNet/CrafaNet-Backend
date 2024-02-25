@@ -40,6 +40,7 @@ const UserSchema = new Schema({
     // Kullanıcının kayıt olduğu tarih
     registerDate: {
         type: Date,
+        default: Date.now,
     },
     // Hesap doğrulama işlemi için kullanılacak olan veriler
     confirm: {

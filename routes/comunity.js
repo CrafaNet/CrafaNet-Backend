@@ -1,13 +1,28 @@
 const express = require("express")
 const router = express.Router();
 
-const pageController = require("../controllers/page");
+const comunityController = require("../controllers/comunity");
 const redirect = require("../middlewares/redirect");
 const auth = require("../middlewares/auth");
  
 
 
-// router.route("/register").post(pageController.createUser); 
-
+router.route("/userSpecializedCommunities").get(auth, comunityController.userSpecializedCommunities);
+router.route("/createComunity").post(comunityController.createComunity);
+router.route("/updateComunity/:id").put(auth, comunityController.updateComunity);
+router.route("/payRegistrationFee/:id").post(comunityController.payRegistrationFee);
+router.route("/listOfCategories").post(comunityController.listOfCategories);
+router.route("/joinComunity").get(comunityController.joinComunity);
+router.route("/comunityDetail").get(comunityController.comunityDetail);
+router.route("/comunityMembers").get(comunityController.comunityMembers);
+router.route("/comunityVideos").get(comunityController.comunityVideos);
+router.route("/addNewVideo").get(comunityController.addNewVideo);
+router.route("/updateVideo").put(comunityController.updateVideo);
+router.route("/changeStatusVideo").delete(comunityController.changeStatusVideo);
+router.route("/addCommentInVideo").post(comunityController.addCommentInVideo);
+router.route("/deleteCommentInVideo").post(comunityController.deleteCommentInVideo);
+router.route("/addAnswerInComment").post(comunityController.addAnswerInComment);
+router.route("/deleteAnswerInComment").post(comunityController.deleteAnswerInComment); 
+router.route("/leaveComunity").post(comunityController.leaveComunity);
 
 module.exports = router;
