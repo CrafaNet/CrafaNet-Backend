@@ -14,7 +14,7 @@ const ComunitySchema = new Schema({
     description: { // atölyenin açıklaması min 100 karakter max 250 karakter
         type: String,
     },
-    promoIllüstiration: { // illüstrasyonlar arasından atölye birini seçecek
+    promoIllustiration: { // illüstrasyonlar arasından atölye birini seçecek
         type: String,
     },
     coverImage: { // atölyenin listelendiği sayfada bulunan kapak resmi
