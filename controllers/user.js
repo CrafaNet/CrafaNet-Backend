@@ -12,7 +12,7 @@ exports.registerUser = async (req, res, next) => {
     } else {
         const response = {
             status: status.status,
-            message: status.msgError
+            message: status.message
         };
         return res.json(response);
     }
