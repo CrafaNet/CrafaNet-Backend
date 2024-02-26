@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
         if (existingUser) {
             const response = {
                 status: 201,
-                message: "message_createUser_201"
+                message: "message_register_201"
             };
             return response;
         }
@@ -48,14 +48,14 @@ exports.createUser = async (req, res) => {
         const response = {
             status: 200,
             data: user,
-            message: "message_createUser_200"
+            message: "message_register_200"
         };
         return response;
     } catch (error) {
         console.log(error);
         const response = {
             status: 500,
-            message: "message_createUser_500",
+            message: "message_register_500",
         };;
         return response;
     }
@@ -68,7 +68,7 @@ exports.loginUser = async (req, res) => {
         if (!phone || !password) {
             const response = {
                 status: 201,
-                message: "message_loginUser_201"
+                message: "message_login_201"
             };
             return res.json(response);
         }
@@ -88,20 +88,20 @@ exports.loginUser = async (req, res) => {
                 const response = {
                     status: 200,
                     data: user,
-                    message: "message_loginUser_200"
+                    message: "message_login_200"
                 };
                 return res.json(response);
             } else {
                 const response = {
                     status: 202,
-                    message: "message_loginUser_202"
+                    message: "message_login_202"
                 };
                 return res.json(response);
             }
         } else {
             const response = {
                 status: 203,
-                message: "message_loginUser_203"
+                message: "message_login_203"
             };
             return res.json(response);
         }
@@ -110,7 +110,7 @@ exports.loginUser = async (req, res) => {
         const response = {
             status: 500,
             eror: error,
-            message: "message_loginUser_500"
+            message: "message_login_500"
         };
         return res.json(response);
     }
@@ -124,13 +124,13 @@ exports.logoutUser = async (req, res) => {
         user.save()
         const response = {
             status: 200,
-            message: "message_logoutUser_200"
+            message: "message_logout_200"
         };
         return res.json(response);
     } catch (error) {
         const response = {
             status: 500,
-            message: "message_logoutUser_500"
+            message: "message_logout_500"
         };
         return res.json(response);
     }
