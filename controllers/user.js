@@ -7,7 +7,6 @@ const User = require("../models/User");
 // Register işlemi için createUser ve sendConfirmCode apilerini birleştirdim ön yüzde ayrı ayrı değilde tek yerden istek atılsın diye
 exports.registerUser = async (req, res, next) => {
     const status = await this.createUser(req, res);
-    console.log(status)
     if (status.status == 200) {
         this.sendConfirmCode(req, res)
     } else {
@@ -26,7 +25,7 @@ exports.createUser = async (req, res) => {
         if (existingUser) {
             const response = {
                 status: 201,
-                message: "Bu telefon ile daha önce kayıt olunmuş. Giriş yapınız."
+                message: "message_createUser_201"
             };
             return response;
         }
@@ -48,13 +47,15 @@ exports.createUser = async (req, res) => {
 
         const response = {
             status: 200,
-            data: user
+            data: user,
+            message: "message_createUser_200"
         };
         return response;
     } catch (error) {
         console.log(error);
         const response = {
             status: 500,
+            message: "message_createUser_500",
         };;
         return response;
     }
@@ -67,6 +68,7 @@ exports.loginUser = async (req, res) => {
         if (!phone || !password) {
             const response = {
                 status: 201,
+                message: "message_loginUser_201"
             };
             return res.json(response);
         }
@@ -85,18 +87,21 @@ exports.loginUser = async (req, res) => {
                 await hashToken(req, user)
                 const response = {
                     status: 200,
-                    data: user
+                    data: user,
+                    message: "message_loginUser_200"
                 };
                 return res.json(response);
             } else {
                 const response = {
                     status: 202,
+                    message: "message_loginUser_202"
                 };
                 return res.json(response);
             }
         } else {
             const response = {
                 status: 203,
+                message: "message_loginUser_203"
             };
             return res.json(response);
         }
@@ -104,7 +109,8 @@ exports.loginUser = async (req, res) => {
         console.log(error);
         const response = {
             status: 500,
-            eror: error
+            eror: error,
+            message: "message_loginUser_500"
         };
         return res.json(response);
     }
@@ -118,11 +124,13 @@ exports.logoutUser = async (req, res) => {
         user.save()
         const response = {
             status: 200,
+            message: "message_logoutUser_200"
         };
         return res.json(response);
     } catch (error) {
         const response = {
             status: 500,
+            message: "message_logoutUser_500"
         };
         return res.json(response);
     }
@@ -133,7 +141,8 @@ exports.sendUserInfo = async (req, res) => {
     const user = await User.findOne({ token: req.body.data.token })
     const response = {
         status: 200,
-        data: user
+        data: user,
+        message: "message_sendUserInfo_200"
     };
     return res.json(response);
 }
@@ -143,7 +152,8 @@ exports.updateUserInfo = async (req, res) => {
     const user = await User.findOneAndUpdate({ token: req.body.data.token }, { ...req.body.data }, { new: true })
     const response = {
         status: 200,
-        data: user
+        data: user,
+        message: "message_updateUserInfo_200"
     };
     return res.json(response);
 };
@@ -165,11 +175,13 @@ exports.sendConfirmCode = async (req, res) => {
         console.log('sms api daha bağlanmadı db ye kaydedildi.')
 
         res.status(200).json({
-            status: 200
+            status: 200,
+            message: "message_sendConfirmCode_200"
         });
     } else {
         res.status(201).json({
             status: 201,
+            message: "message_sendConfirmCode_201"
         });
     }
 }
@@ -183,7 +195,7 @@ exports.checkConfirmCode = async (req, res) => {
     if (user.confirm) {
         const response = {
             status: 202,
-            message: "Kullanıcı zaten doğrulanmış."
+            message: "message_checkConfirmCode_202"
         };
         return res.json(response);
     }
@@ -193,14 +205,14 @@ exports.checkConfirmCode = async (req, res) => {
         await user.save()
         const response = {
             status: 200,
-            message: "Doğrulama başarılı.",
+            message: "message_checkConfirmCode_200",
             data: { token: user.token }
         };
         return res.json(response);
     } else {
         const response = {
             status: 201,
-            message: "Doğrulama kodu hatalı."
+            message: "message_checkConfirmCode_201"
         };
         return res.json(response);
     }
@@ -213,6 +225,7 @@ exports.sendResetPasswordCode = async (req, res) => {
         if (user.resetPasswordCodeSendDate + 120000 > Date.now()) { // 2 dakikadan az süre geçmişse
             return res.status(202).json({
                 status: 202,
+                message: "message_sendResetPasswordCode_202"
             });
         }
         user.resetPasswordCode = Math.floor(Math.random() * 10000);
@@ -221,11 +234,13 @@ exports.sendResetPasswordCode = async (req, res) => {
 
         return res.status(200).json({
             status: 200,
-            data: { token: user.token }
+            data: { token: user.token },
+            message: "message_sendResetPasswordCode_200"
         });
     } else {
         const response = {
             status: 201,
+            message: "message_sendResetPasswordCode_201"
         };
         return res.json(response);
     }
@@ -242,18 +257,21 @@ exports.checkResetPasswordCode = async (req, res) => {
             });
             const response = {
                 status: 200,
+                message: "message_checkResetPasswordCode_200"
             };
             return res.json(response);
         } else {
             const response = {
                 status: 201,
+                message: "message_checkResetPasswordCode_201"
             };
             return res.json(response);
         }
     }
     const response = {
         status: 500,
-        data: { token: user.token }
+        data: { token: user.token },
+        message: "message_checkResetPasswordCode_500"
     };
     return res.json(response);
 }

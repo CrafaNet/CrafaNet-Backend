@@ -9,14 +9,14 @@ exports.listAllComunities = async (req, res) => {
         const comunities = await Comunity.find();
         const response = {
             status: 200,
-            message: "All comunities are listed.",
+            message: "message_listAllComunities_200",
             data: comunities
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while listing comunities."
+            message: "message_listAllComunities_500"
         };
         return response;
     }
@@ -52,14 +52,14 @@ exports.userSpecializedCommunities = async (req, res) => {
 
         const response = {
             status: 200,
-            message: "All comunities are listed.",
+            message: "message_userSpecializedCommunities_200",
             data: comunities
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while listing comunities."
+            message: "message_userSpecializedCommunities_500"
         };
         return response;
     }
@@ -73,14 +73,14 @@ exports.createComunity = async (req, res) => {
         });
         const response = {
             status: 200,
-            message: "Comunity is created.",
+            message: "message_createComunity_200",
             data: comunity
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while creating comunity."
+            message: "message_createComunity_500"
         };
         return response;
     }
@@ -93,14 +93,14 @@ exports.updateComunity = async (req, res) => {
         });
         const response = {
             status: 200,
-            message: "Comunity is updated.",
+            message: "message_updateComunity_200",
             data: comunity
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while updating comunity."
+            message: "message_updateComunity_500"
         };
         return response;
     }
@@ -117,20 +117,20 @@ exports.payRegistrationFee = async (req, res) => {
             });
             const response = {
                 status: 200,
-                message: "Registration fee is paid.",
+                message: "message_payRegistrationFee_200",
                 data: comunity
             };
         } else {
             const response = {
                 status: 201,
-                message: "Payment failed."
+                message: "message_payRegistrationFee_201"
             };
         }
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while paying registration fee."
+            message: "message_payRegistrationFee_500"
         };
         return response;
     }
@@ -142,14 +142,14 @@ exports.listOfCategories = async (req, res) => {
         const categories = await Category.find();
         const response = {
             status: 200,
-            message: "All categories are listed.",
+            message: "message_listOfCategories_200",
             data: categories
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while listing categories."
+            message: "message_listOfCategories_500"
         };
         return response;
     }
@@ -171,20 +171,20 @@ exports.joinComunity = async (req, res) => {
             user.save();
             const response = {
                 status: 200,
-                message: "User joined comunity.",
+                message: "message_joinComunity_200",
                 data: comunity
             };
         } else {
             const response = {
                 status: 201,
-                message: "Payment failed."
+                message: "message_joinComunity_201"
             };
         }
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while joining comunity."
+            message: "message_joinComunity_500"
         };
         return response;
     }
@@ -203,20 +203,20 @@ exports.leaveComunity = async (req, res) => {
             user.save();
             const response = {
                 status: 200,
-                message: "User left comunity."
+                message: "message_leaveComunity_200"
             };
             return response;
         } else {
             const response = {
                 status: 201,
-                message: "There was a problem canceling the subscription. Please contact us."
+                message: "message_leaveComunity_201"
             };
             return response;
         }
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while leaving comunity."
+            message: "message_leaveComunity_500"
         };
         return response;
     }
@@ -233,14 +233,14 @@ exports.comunitySearch = async (req, res) => {
         });
         const response = {
             status: 200,
-            message: "Arama sonuçları listelendi.",
+            message: "message_comunitySearch_200",
             data: communities
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "Arama sonuçları listelenirken bir hata oluştu."
+            message: "message_comunitySearch_500"
         };
         return response;
     }
@@ -251,14 +251,14 @@ exports.comunityDetail = async (req, res) => {
         const comunity = await Comunity.findOne({ _id: req.body.data.id });
         const response = {
             status: 200,
-            message: "Comunity is listed.",
+            message: "message_comunityDetail_200",
             data: comunity
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while listing comunity."
+            message: "message_comunityDetail_500"
         };
         return response;
     }
@@ -269,7 +269,7 @@ exports.comunityMembers = async (req, res) => {
         const comunity = await Comunity.findOne({ _id: req.body.data.id }).populate('members');
         const response = {
             status: 200,
-            message: "Comunity members are listed.",
+            message: "message_comunityMembers_200",
             data: comunity.members
         };
         return response;
@@ -277,7 +277,7 @@ exports.comunityMembers = async (req, res) => {
     catch {
         const response = {
             status: 500,
-            message: "An error occured while listing comunity members."
+            message: "message_comunityMembers_500"
         };
         return response;
     }
@@ -296,7 +296,7 @@ exports.comunityVideos = async (req, res) => {
 
         const response = {
             status: 200,
-            message: "Topluluk videoları listelendi.",
+            message: "message_comunityVideos_200",
             data: {
                 pastVideos: pastVideos, // Yayınlama tarihi geçmiş videolar
                 futureVideos: futureVideos, // Yayınlama tarihi gelecek videolar, daha yayına çıkmamış planlanmış videolar
@@ -311,7 +311,7 @@ exports.comunityVideos = async (req, res) => {
     catch (error) {
         const response = {
             status: 500,
-            message: "Topluluk videoları listelenirken bir hata oluştu."
+            message: "message_comunityVideos_500"
         };
 
         return response;
@@ -330,14 +330,14 @@ exports.addNewVideo = async (req, res) => {
         comunity.save();
         const response = {
             status: 200,
-            message: "Video is added to comunity.",
+            message: "message_addNewVideo_200",
             data: video
         };
     }
     catch {
         const response = {
             status: 500,
-            message: "An error occured while adding video to comunity."
+            message: "message_addNewVideo_500"
         };
         return response;
     }
@@ -349,7 +349,7 @@ exports.updateVideo = async (req, res) => {
         if (!comunity.videos.includes(req.body.data.videoID)) {
             const response = {
                 status: 201,
-                message: "This video does not belong to this comunity."
+                message: "message_updateVideo_201"
             };
             return response;
         }
@@ -358,14 +358,14 @@ exports.updateVideo = async (req, res) => {
         });
         const response = {
             status: 200,
-            message: "Video is updated.",
+            message: "message_updateVideo_200",
             data: video
         };
         return response;
     } catch {
         const response = {
             status: 500,
-            message: "An error occured while updating video."
+            message: "message_updateVideo_500"
         };
         return response;
     }
@@ -377,7 +377,7 @@ exports.changeStatusVideo = async (req, res) => {
         if (!comunity.videos.includes(req.body.data.videoID)) {
             const response = {
                 status: 201,
-                message: "This video does not belong to this comunity."
+                message: "message_changeStatusVideo_201"
             };
             return response;
         }
@@ -386,7 +386,7 @@ exports.changeStatusVideo = async (req, res) => {
         });
         const response = {
             status: 200,
-            message: "Video status is changed.",
+            message: "message_changeStatusVideo_200",
             data: video
         };
         return response;
@@ -394,7 +394,7 @@ exports.changeStatusVideo = async (req, res) => {
     catch {
         const response = {
             status: 500,
-            message: "An error occured while changing video status."
+            message: "message_changeStatusVideo_500"
         };
         return response;
     }
@@ -412,7 +412,7 @@ exports.addCommentInVideo = async (req, res) => {
         await comment.save();
         const response = {
             status: 200,
-            message: "Comment is added to video.",
+            message: "message_addCommentInVideo_200",
             data: comment
         };
         return response;
@@ -420,7 +420,7 @@ exports.addCommentInVideo = async (req, res) => {
     catch {
         const response = {
             status: 500,
-            message: "An error occured while adding comment to video."
+            message: "message_addCommentInVideo_500"
         };
         return response;
     }
@@ -435,14 +435,14 @@ exports.deleteCommentInVideo = async (req, res) => {
         comment.remove();
         const response = {
             status: 200,
-            message: "Comment is deleted from video."
+            message: "message_deleteCommentInVideo_200"
         };
         return response;
     }
     catch {
         const response = {
             status: 500,
-            message: "An error occured while deleting comment from video."
+            message: "message_deleteCommentInVideo_500"
         };
         return response;
     }
@@ -460,7 +460,7 @@ exports.addAnswerInComment = async (req, res) => {
         answer.save();
         const response = {
             status: 200,
-            message: "Answer is added to comment.",
+            message: "message_addAnswerInComment_200",
             data: answer
         };
         return response;
@@ -468,7 +468,7 @@ exports.addAnswerInComment = async (req, res) => {
     catch {
         const response = {
             status: 500,
-            message: "An error occured while adding answer to comment."
+            message: "message_addAnswerInComment_500"
         };
         return response;
     }
@@ -480,14 +480,14 @@ exports.deleteAnswerInComment = async (req, res) => {
         answer.remove();
         const response = {
             status: 200,
-            message: "Answer is deleted from comment."
+            message: "message_deleteAnswerInComment_200"
         };
         return response;
     }
     catch {
         const response = {
             status: 500,
-            message: "An error occured while deleting answer from comment."
+            message: "message_deleteAnswerInComment_500"
         };
         return response;
     }
@@ -512,7 +512,7 @@ exports.userCustomunizedCategories = async (req, res) => {
         }
         const response = {
             status: 200,
-            message: "User's customunized categories are listed.",
+            message: "message_userCustomunizedCategories_200",
             data: categories
         };
         return response;
@@ -520,7 +520,7 @@ exports.userCustomunizedCategories = async (req, res) => {
     catch {
         const response = {
             status: 500,
-            message: "An error occured while listing user's customunized categories."
+            message: "message_userCustomunizedCategories_500"
         };
         return response;
     }
