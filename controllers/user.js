@@ -139,7 +139,7 @@ exports.logoutUser = async (req, res) => {
 
 // Kullanıcı bilgilerini getirme işlemi
 exports.sendUserInfo = async (req, res) => {
-    const user = await User.findOne({ token: req.body.data.token })
+    const user = await User.findOne({ token: req.body.data.token }).populate('interestWorkshop')
     const response = {
         status: 200,
         data: user,
