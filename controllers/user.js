@@ -72,7 +72,7 @@ exports.loginUser = async (req, res) => {
             };
             return res.json(response);
         }
-        const user = await User.findOne({ phone: phone }).exec();
+        const user = await User.findOne({ phone: phone }).select('token password phone confirm')
         if (user) {
             // Kullanıcının şifresini bcrypt ile karşılaştır
             const passwordMatch = await bcrypt.compare(password, user.password);
@@ -85,9 +85,10 @@ exports.loginUser = async (req, res) => {
                     await user.save()
                 }
                 await hashToken(req, user)
+                console.log(user)
                 const response = {
-                    status: 200,
-                    data: user,
+                    status: 200, 
+                    data: { token: user.token },
                     message: "message_login_200"
                 };
                 return res.json(response);
