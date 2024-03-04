@@ -9,6 +9,7 @@ const auth = require("../middlewares/auth");
 
 router.route("/userSpecializedCommunities").post(auth, comunityController.userSpecializedCommunities);
 router.route("/listAllComunities").post(comunityController.listAllComunities);
+router.route("/userCustomunizedCategories").post(comunityController.userCustomunizedCategories);
 router.route("/createComunity").post(comunityController.createComunity);
 router.route("/updateComunity/:id").put(auth, comunityController.updateComunity);
 router.route("/payRegistrationFee/:id").post(comunityController.payRegistrationFee);

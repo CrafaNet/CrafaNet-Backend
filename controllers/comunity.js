@@ -12,13 +12,13 @@ exports.listAllComunities = async (req, res) => {
             message: "message_listAllComunities_200",
             data: comunities
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_listAllComunities_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -47,7 +47,7 @@ exports.userSpecializedCommunities = async (req, res) => {
         comunities.sort((a, b) => {
             const aCount = a.categories.reduce((total, category) => total + (categoryCount[category.name] || 0), 0);
             const bCount = b.categories.reduce((total, category) => total + (categoryCount[category.name] || 0), 0);
-            return bCount - aCount; // Azalan sıraya göre sırala
+            bCount - aCount; // Azalan sıraya göre sırala
         });
 
         const response = {
@@ -55,36 +55,51 @@ exports.userSpecializedCommunities = async (req, res) => {
             message: "message_userSpecializedCommunities_200",
             data: comunities
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_userSpecializedCommunities_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
 
 exports.createComunity = async (req, res) => {
     try {
-        const comunity = await Comunity.create({
-            ...req.body.data
-        });
-        const response = {
-            status: 200,
-            message: "message_createComunity_200",
-            data: comunity
-        };
-        return response;
-    } catch {
+        const existingComunity = await Comunity.findOne({ name: req.body.data.name });
+        if (existingComunity) {
+            // Eğer aynı isimde bir topluluk varsa hata döndür
+            const response = {
+                status: 409, // Conflict HTTP durumu
+                message: "message_createComunity_409" // İstek çakışması mesajı
+            };
+            return res.json(response);
+        } else {
+            // Aynı isimde topluluk yoksa yeni bir topluluk oluştur
+            const comunity = await Comunity.create(
+                {
+                    ...req.body.data
+                }
+            );
+            const response = {
+                status: 200,
+                message: "message_createComunity_200",
+                data: comunity
+            };
+            return res.json(response);
+        }
+    } catch (error) {
+        console.log('createComunity fonksiyonunda hata:', error);
         const response = {
             status: 500,
             message: "message_createComunity_500"
         };
-        return response;
+        return res.json(response);
     }
 };
+
 
 exports.updateComunity = async (req, res) => {
     try {
@@ -96,13 +111,13 @@ exports.updateComunity = async (req, res) => {
             message: "message_updateComunity_200",
             data: comunity
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_updateComunity_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -126,13 +141,13 @@ exports.payRegistrationFee = async (req, res) => {
                 message: "message_payRegistrationFee_201"
             };
         }
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_payRegistrationFee_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -145,13 +160,13 @@ exports.listOfCategories = async (req, res) => {
             message: "message_listOfCategories_200",
             data: categories
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_listOfCategories_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -180,13 +195,13 @@ exports.joinComunity = async (req, res) => {
                 message: "message_joinComunity_201"
             };
         }
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_joinComunity_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -205,20 +220,20 @@ exports.leaveComunity = async (req, res) => {
                 status: 200,
                 message: "message_leaveComunity_200"
             };
-            return response;
+            return res.json(response);
         } else {
             const response = {
                 status: 201,
                 message: "message_leaveComunity_201"
             };
-            return response;
+            return res.json(response);
         }
     } catch {
         const response = {
             status: 500,
             message: "message_leaveComunity_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -236,13 +251,13 @@ exports.comunitySearch = async (req, res) => {
             message: "message_comunitySearch_200",
             data: communities
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_comunitySearch_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -254,13 +269,13 @@ exports.comunityDetail = async (req, res) => {
             message: "message_comunityDetail_200",
             data: comunity
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_comunityDetail_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -272,14 +287,14 @@ exports.comunityMembers = async (req, res) => {
             message: "message_comunityMembers_200",
             data: comunity.members
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_comunityMembers_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -306,7 +321,7 @@ exports.comunityVideos = async (req, res) => {
             }
         };
 
-        return response;
+        return res.json(response);
     }
     catch (error) {
         const response = {
@@ -314,7 +329,7 @@ exports.comunityVideos = async (req, res) => {
             message: "message_comunityVideos_500"
         };
 
-        return response;
+        return res.json(response);
     }
 }
 
@@ -339,7 +354,7 @@ exports.addNewVideo = async (req, res) => {
             status: 500,
             message: "message_addNewVideo_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -351,7 +366,7 @@ exports.updateVideo = async (req, res) => {
                 status: 201,
                 message: "message_updateVideo_201"
             };
-            return response;
+            return res.json(response);
         }
         const video = await Video.findByIdAndUpdate(req.body.data.videoID, {
             ...req.body.data
@@ -361,13 +376,13 @@ exports.updateVideo = async (req, res) => {
             message: "message_updateVideo_200",
             data: video
         };
-        return response;
+        return res.json(response);
     } catch {
         const response = {
             status: 500,
             message: "message_updateVideo_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -379,7 +394,7 @@ exports.changeStatusVideo = async (req, res) => {
                 status: 201,
                 message: "message_changeStatusVideo_201"
             };
-            return response;
+            return res.json(response);
         }
         const video = await Video.findByIdAndUpdate(req.body.data.videoID, {
             actieve: req.body.data.status
@@ -389,14 +404,14 @@ exports.changeStatusVideo = async (req, res) => {
             message: "message_changeStatusVideo_200",
             data: video
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_changeStatusVideo_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -415,14 +430,14 @@ exports.addCommentInVideo = async (req, res) => {
             message: "message_addCommentInVideo_200",
             data: comment
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_addCommentInVideo_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 
@@ -437,14 +452,14 @@ exports.deleteCommentInVideo = async (req, res) => {
             status: 200,
             message: "message_deleteCommentInVideo_200"
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_deleteCommentInVideo_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -463,14 +478,14 @@ exports.addAnswerInComment = async (req, res) => {
             message: "message_addAnswerInComment_200",
             data: answer
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_addAnswerInComment_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
@@ -482,20 +497,20 @@ exports.deleteAnswerInComment = async (req, res) => {
             status: 200,
             message: "message_deleteAnswerInComment_200"
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_deleteAnswerInComment_500"
         };
-        return response;
+        return res.json(response);
     }
 };
 
 exports.userCustomunizedCategories = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.body.data.userID }).populate({ path: 'interestWorkshop', populate: { path: 'categories' } });
+        const user = await User.findOne({ token:req.body.data.token}).populate({ path: 'interestWorkshop', populate: { path: 'categories' } });
         let categories = [];
         user.interestWorkshop.forEach(comunity => {
             comunity.categories.forEach(category => {
@@ -515,14 +530,14 @@ exports.userCustomunizedCategories = async (req, res) => {
             message: "message_userCustomunizedCategories_200",
             data: categories
         };
-        return response;
+        return res.json(response);
     }
     catch {
         const response = {
             status: 500,
             message: "message_userCustomunizedCategories_500"
         };
-        return response;
+        return res.json(response);
     }
 }
 

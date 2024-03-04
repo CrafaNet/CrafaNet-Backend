@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const ComunitySchema = new Schema({ 
     actieve: { // atölye kayıt ücretini ödedikten sonra aktifleşir
         type: Boolean,
+        default: false
     },
     name: {
         type: String,

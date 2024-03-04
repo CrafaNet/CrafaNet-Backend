@@ -59,14 +59,14 @@ const UserSchema = new Schema({
     resetPasswordCodeSendDate: {
         type: Date,
     },
-    interestWorkshop: { 
+    interestWorkshop: [{ 
         type: Schema.Types.ObjectId,
         ref: 'Comunity',
-    },
-    interestSkillHubPosts: {
+    }],
+    interestSkillHubPosts: [{
         type: Schema.Types.ObjectId,
         ref: 'SkillHubPost',
-    },
+    }],
 });
 
 const User = mongoose.model("User", UserSchema);
