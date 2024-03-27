@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
 const User = require("../models/User");
+const Notification = require("../models/materials/Notification");
 
 
 // Register işlemi için createUser ve sendConfirmCode apilerini birleştirdim ön yüzde ayrı ayrı değilde tek yerden istek atılsın diye
@@ -87,7 +88,7 @@ exports.loginUser = async (req, res) => {
                 await hashToken(req, user)
                 console.log(user)
                 const response = {
-                    status: 200, 
+                    status: 200,
                     data: { token: user.token },
                     message: "message_login_200"
                 };
@@ -277,3 +278,105 @@ exports.checkResetPasswordCode = async (req, res) => {
     return res.json(response);
 }
 
+exports.userNotifications = async (req, res) => {
+    const user = await User.findOne({ token: req.body.data.token }).populate('notifications')
+    let notifications = []
+    if(user.language == "ar"){
+        notifications = user.notifications.map((notification) => {
+            return {
+                message: notification.message.ar,
+                date: notification.date,
+                type: notification.type
+            }
+        })
+    }
+    else if(user.language == "de"){
+        notifications = user.notifications.map((notification) => {
+            return {
+                message: notification.message.en,
+                date: notification.date,
+                type: notification.type
+            }
+        })
+    }
+    else{
+        notifications = user.notifications.map((notification) => {
+            return {
+                message: notification.message.en,
+                date: notification.date,
+                type: notification.type
+            }
+        })
+    }
+    
+    const response = {
+        status: 200,
+        data: notifications,
+        message: "message_userNotifications_200"
+    };
+    return res.json(response);
+}
+
+
+// Yönetici tarafından tüm kullanıcılara bildirim gönderme işlemi (kullanıcının diline göre bildirim gönderme işlemi yapılıyor)
+exports.sendAnouncmentNotification = async (req, res) => {
+    const user = await User.find();
+    const notification = await Notification.create({
+        ...req.body.data
+    });
+    notification.type = "announcement"
+    await notification.save()
+    user.forEach(async (element) => {
+        element.notifications.push(notification._id)
+        await element.save()
+    });
+    const response = {
+        status: 200,
+        message: "message_sendNotification_200"
+    };
+    return res.json(response);
+}
+
+
+exports.updateUserInfo = async (req, res) => {
+    const user = await User.findOneAndUpdate({ token: req.body.data.token }, { ...req.body.data }, { new: true })
+    const response = {
+        status: 200,
+        data: user,
+        message: "message_updateUserInfo_200"
+    };
+    return res.json(response);
+}
+
+exports.updatePhoneNumber = async (req, res) => {
+    const user = await User.findOne({ token: req.body.data.token })
+    const confirmCode = Math.floor(Math.random() * 10000)
+    user.confirmCode = confirmCode
+    if (user.confirmCodeSendDate + 120000 > Date.now()) { // 2 dakikadan az süre geçmişse
+        return res.status(202).json({
+            status: 202,
+            message: "message_sendConfirmCode_202"
+        });
+    }
+    user.confirmCodeSendDate = Date.now()
+    await user.save()
+
+    // SMS gönderme işlemi kullanıcıya
+    console.log('sms api daha bağlanmadı db ye kaydedildi.')
+
+    if (user.confirmCode == req.body.data.confirmCode) {
+        user.phone = req.body.data.phone
+        user.save()
+        const response = {
+            status: 200,
+            message: "message_updatePhoneNumber_200"
+        };
+        return res.json(response);
+    } else {
+        const response = {
+            status: 201,
+            message: "message_updatePhoneNumber_201"
+        };
+        return res.json(response);
+    }
+}

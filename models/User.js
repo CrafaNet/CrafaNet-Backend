@@ -11,9 +11,7 @@ const UserSchema = new Schema({
     phone: {
         type: String,
         unique: true,
-    },
-    email: {
-        type: String,
+        required: true,
     },
     password: {
         type: String,
@@ -32,10 +30,10 @@ const UserSchema = new Schema({
     },
     country: {
         type: String,
-    },
-    notifications:[{
+    }, 
+    notifications:[{ 
         type: Schema.Types.ObjectId,
-        ref: 'Notification',
+        ref: 'Notification', 
     }],
     // Kullanıcının kayıt olduğu tarih
     registerDate: {
