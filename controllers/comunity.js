@@ -520,7 +520,7 @@ exports.userCustomunizedCategories = async (req, res) => {
             });
         });
         if (categories.length < 10) {
-            const topCategories = await Category.find().sort({ "community.length": -1 }).limit(10 - categories.length);
+            const topCategories = await Category.find().sort({ "community.length": -1 }).limit(5 - categories.length);
             topCategories.forEach(category => { // İlgi alanı 10'dan azsa en popüler kategorilerin 10'a kadar ekler.
                 categories.push(category);
             });

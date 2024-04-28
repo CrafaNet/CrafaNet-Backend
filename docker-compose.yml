@@ -1,0 +1,15 @@
+version: '3'
+services:
+       exnoremo-company:
+            build: .
+            container_name: crafanet
+            restart: always
+            ports:
+                  - 3000:3000
+            volumes:
+                  - ./:/app
+            command: "node app.js"            
+networks:
+    default:
+        name: nginx_default
+        external: true
