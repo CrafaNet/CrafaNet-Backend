@@ -16,11 +16,16 @@ app.use(express.static("public"));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-mongoose.connect(process.env.DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+mongoose.connect(process.env.MONGODB_URI, {
+  // useNewUrlParser: true,
+  // useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('Veritabanına bağlanıldı');
+})
+.catch((err) => {
+  console.error('Veritabanı bağlanma hatası:', err);
 });
-
 
 app.use(function (req, res, next) {
   res.locals.req = req;
@@ -41,6 +46,6 @@ app.use(
 const routes = require('./routes/main');
 app.use('/', routes);
 
-app.listen(process.env.PORT || 5050, '0.0.0.0', () => {
-  console.log(`App is running on port ${process.env.PORT || 5050}`);
+app.listen(process.env.PORT || 2000, '0.0.0.0', () => {
+  console.log(`App is running on port ${process.env.PORT || 2000}`);
 });

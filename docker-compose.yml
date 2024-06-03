@@ -1,15 +1,24 @@
 version: '3'
 services:
-       exnoremo-company:
-            build: .
-            container_name: crafanet
-            restart: always
-            ports:
-                  - 3000:3000
-            volumes:
-                  - ./:/app
-            command: "node app.js"            
-networks:
-    default:
-        name: nginx_default
-        external: true
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  crafanetbackend:
+    build: .
+    container_name: crafanetbackend
+    restart: always
+    ports:
+      - 2000:2000
+    volumes:
+      - ./:/app
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/crafaNet
+
+volumes:
+  mongodb_data:
