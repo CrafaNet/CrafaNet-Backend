@@ -39,7 +39,7 @@ app.use(session({
 app.use(function (req, res, next) {
   res.locals.req = req;
   res.locals.res = res;
-  req.url = `${req.body.api}`;
+  req.url = `${req.body.api}`; 
   token = req.session.token;
   next();
 });

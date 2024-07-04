@@ -43,8 +43,9 @@ const UserSchema = new Schema({
     // Hesap doğrulama işlemi için kullanılacak olan veriler
     confirm: {
         type: Boolean,
+        default: false,
     },
-    confirmCode: {
+    confirmCode: { 
         type: String,
     },
     confirmCodeSendDate: {

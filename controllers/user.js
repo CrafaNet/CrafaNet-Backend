@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const User = require("../models/User");
 const Notification = require("../models/materials/Notification");
 
+const sendSms = require('../functions/sendSms').sendSMS;
 
 // Kullanıcı kayıt olma işlemi 
 exports.registerUser = async (req, res) => {
@@ -14,7 +15,7 @@ exports.registerUser = async (req, res) => {
                 status: 201,
                 message: "message_register_201"
             };
-            return response;
+            return res.json(response);
         }
 
         const user = await User.create({
@@ -32,24 +33,67 @@ exports.registerUser = async (req, res) => {
         user.registerDate = Date.now()
         await user.save()
 
-        console.log(user)
+        // SMS gönderme işlemi kullanıcıya kodu diğer fonksiyonda doğrulayacak eğer doğrulama işlemi başarılı olursa hesabı aktif olacak, değilse bu şekilde kalacak
+        user.confirmCodeSendDate = Date.now()
+        user.confirmCode = await Math.floor(Math.random() * 1000000)
+        await user.save()
+        await sendSms(user.phone, "Kayıt işleminizin başarılı olması için doğrulama kodunuz: " + user.confirmCode + " Geçerlilik süresi 10 dakikadır. Doğrulama kodunuzu kimseyle paylaşmayınız.")
 
         const response = {
             status: 200,
             data: user,
             message: "message_register_200"
         };
-        // SMS gönderme işlemi kullanıcıya
-        return response;
+        return res.json(response);
     } catch (error) {
         console.log(error);
         const response = {
             status: 500,
             message: "message_register_500",
         };;
-        return response;
+        return res.json(response);
     }
 };
+
+
+// Kullanıcının hesabını doğrulaması
+exports.confirmUser = async (req, res) => {
+    try {
+        const user = await User.findOne({ phone: req.body.data.phone });
+        if(user.confirm){ // Eğer kullanıcı zaten doğrulanmışsa
+            const response = {
+                status: 202,
+                message: "message_confirmUser_202"
+            };
+            return res.json(response);
+        }
+        if (user.confirmCode == req.body.data.confirmCode) {
+            user.confirm = true
+            user.confirmCode = ""
+            await user.save()
+            const response = {
+                status: 200,
+                message: "message_confirmUser_200"
+            };
+            return res.json(response);
+        } else {
+            const response = {
+                status: 201,
+                message: "message_confirmUser_201"
+            };
+            return res.json(response);
+        }
+    }
+    catch (error) {
+        console.log(error);
+        const response = {
+            status: 500,
+            message: "message_confirmUser_500"
+        };
+        return res.json(response);
+    }
+}
+
 
 // Kullanıcı giriş işlemi
 exports.loginUser = async (req, res) => {
@@ -270,7 +314,7 @@ exports.checkResetPasswordCode = async (req, res) => {
 exports.userNotifications = async (req, res) => {
     const user = await User.findOne({ token: req.body.data.token }).populate('notifications')
     let notifications = []
-    if(user.language == "ar"){
+    if (user.language == "ar") {
         notifications = user.notifications.map((notification) => {
             return {
                 message: notification.message.ar,
@@ -279,7 +323,7 @@ exports.userNotifications = async (req, res) => {
             }
         })
     }
-    else if(user.language == "de"){
+    else if (user.language == "de") {
         notifications = user.notifications.map((notification) => {
             return {
                 message: notification.message.en,
@@ -288,7 +332,7 @@ exports.userNotifications = async (req, res) => {
             }
         })
     }
-    else{
+    else {
         notifications = user.notifications.map((notification) => {
             return {
                 message: notification.message.en,
@@ -297,7 +341,7 @@ exports.userNotifications = async (req, res) => {
             }
         })
     }
-    
+
     const response = {
         status: 200,
         data: notifications,
@@ -365,6 +409,27 @@ exports.updatePhoneNumber = async (req, res) => {
         const response = {
             status: 201,
             message: "message_updatePhoneNumber_201"
+        };
+        return res.json(response);
+    }
+}
+
+exports.promoSms = async (req, res) => { // Tüm kullanıcılara tanıtım mesajı gönderme işlemi
+    try {
+        const user = await User.find();
+        user.forEach(async (element) => {
+            sendSms(element.phone, req.body.data.message)
+        });
+        const response = {
+            status: 200,
+            message: "message_promoSms_200"
+        };
+        return res.json(response);
+    } catch (err) {
+        console.log(err)
+        const response = {
+            status: 500,
+            message: "message_promoSms_500"
         };
         return res.json(response);
     }
