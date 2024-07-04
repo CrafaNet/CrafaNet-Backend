@@ -64,10 +64,17 @@ exports.confirmUser = async (req, res) => {
             const response = {
                 status: 202,
                 message: "message_confirmUser_202"
-            };
+            }; 
             return res.json(response);
         }
         if (user.confirmCode == req.body.data.confirmCode) {
+            if(user.confirmCodeSendDate + 600000 < Date.now()){ // 10 dakikadan fazla süre geçmişse
+                const response = {
+                    status: 203,
+                    message: "message_confirmUser_203"
+                };
+                return res.json(response);
+            }
             user.confirm = true
             user.confirmCode = ""
             await user.save()
