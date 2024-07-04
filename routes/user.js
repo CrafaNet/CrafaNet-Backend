@@ -5,10 +5,9 @@ const userController = require("../controllers/user");
 const redirect = require("../middlewares/redirect");
 const auth = require("../middlewares/auth");
 const admin = require("../middlewares/admin");
+ 
 
 
-
-router.route("/create").post(userController.createUser);
 router.route("/register").post(userController.registerUser);
 router.route("/login").post(userController.loginUser);
 router.route("/logout").post(userController.logoutUser);

@@ -5,22 +5,8 @@ const User = require("../models/User");
 const Notification = require("../models/materials/Notification");
 
 
-// Register işlemi için createUser ve sendConfirmCode apilerini birleştirdim ön yüzde ayrı ayrı değilde tek yerden istek atılsın diye
-exports.registerUser = async (req, res, next) => {
-    const status = await this.createUser(req, res);
-    if (status.status == 200) {
-        this.sendConfirmCode(req, res)
-    } else {
-        const response = {
-            status: status.status,
-            message: status.message
-        };
-        return res.json(response);
-    }
-}
-
 // Kullanıcı kayıt olma işlemi 
-exports.createUser = async (req, res) => {
+exports.registerUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ phone: req.body.data.phone });
         if (existingUser) {
@@ -46,11 +32,14 @@ exports.createUser = async (req, res) => {
         user.registerDate = Date.now()
         await user.save()
 
+        console.log(user)
+
         const response = {
             status: 200,
             data: user,
             message: "message_register_200"
         };
+        // SMS gönderme işlemi kullanıcıya
         return response;
     } catch (error) {
         console.log(error);
