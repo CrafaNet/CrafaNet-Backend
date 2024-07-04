@@ -4,15 +4,7 @@ const Schema = mongoose.Schema;
 // Bir bildirim oluturulduğunda aynı bildirim ilgili tüm kullanıclara iletilecek ki database şişmesin ve kontrol edilebilir olsun
 const NotificationSchema = new Schema({
     message: {
-        ar: {
-            type: String,
-        },
-        en: {
-            type: String,
-        },
-        de: {
-            type: String,
-        },
+        type: String,
     },
     date: {
         type: Date,

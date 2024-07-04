@@ -60,15 +60,15 @@ exports.registerUser = async (req, res) => {
 exports.confirmUser = async (req, res) => {
     try {
         const user = await User.findOne({ phone: req.body.data.phone });
-        if(user.confirm){ // Eğer kullanıcı zaten doğrulanmışsa
+        if (user.confirm) { // Eğer kullanıcı zaten doğrulanmışsa
             const response = {
                 status: 202,
                 message: "message_confirmUser_202"
-            }; 
+            };
             return res.json(response);
         }
         if (user.confirmCode == req.body.data.confirmCode) {
-            if(user.confirmCodeSendDate + 600000 < Date.now()){ // 10 dakikadan fazla süre geçmişse
+            if (user.confirmCodeSendDate + 600000 < Date.now()) { // 10 dakikadan fazla süre geçmişse
                 const response = {
                     status: 203,
                     message: "message_confirmUser_203"
@@ -200,71 +200,12 @@ exports.updateUserInfo = async (req, res) => {
     return res.json(response);
 };
 
-// Kullanıcı doğrulama kodu gönderme işlemi
-exports.sendConfirmCode = async (req, res) => {
-    const user = await User.findOne({ phone: req.body.data.phone });
-    if (user) {
-        if (user.confirmCodeSendDate + 120000 > Date.now()) { // 2 dakikadan az süre geçmişse
-            return res.status(202).json({
-                status: 202,
-            });
-        }
-        user.confirmCode = Math.floor(Math.random() * 10000);
-        user.confirmCodeSendDate = Date.now()
-        await user.save()
-
-        // SMS gönderme işlemi kullanıcıya
-        console.log('sms api daha bağlanmadı db ye kaydedildi.')
-
-        res.status(200).json({
-            status: 200,
-            message: "message_sendConfirmCode_200"
-        });
-    } else {
-        res.status(201).json({
-            status: 201,
-            message: "message_sendConfirmCode_201"
-        });
-    }
-}
-
-// Kullanıcı doğrulama kodunu kontrol etme işlemi
-exports.checkConfirmCode = async (req, res) => {
-    const user = await User.findOne({ phone: req.body.data.phone });
-    console.log(req.body.data)
-    console.log(user)
-    console.log(user.confirmCode, req.body.data.confirmCode)
-    if (user.confirm) {
-        const response = {
-            status: 202,
-            message: "message_checkConfirmCode_202"
-        };
-        return res.json(response);
-    }
-    if (req.body.data.confirmCode == user.confirmCode) {
-        user.confirm = true
-        user.confirmCode = ""
-        await user.save()
-        const response = {
-            status: 200,
-            message: "message_checkConfirmCode_200",
-            data: { token: user.token }
-        };
-        return res.json(response);
-    } else {
-        const response = {
-            status: 201,
-            message: "message_checkConfirmCode_201"
-        };
-        return res.json(response);
-    }
-}
 
 // Kullanıcı şifre yenileme kodu gönderme işlemi
 exports.sendResetPasswordCode = async (req, res) => {
     const user = await User.findOne({ phone: req.body.data.phone });
     if (user) {
-        if (user.resetPasswordCodeSendDate + 120000 > Date.now()) { // 2 dakikadan az süre geçmişse
+        if (user.resetPasswordCodeSendDate + 600000 > Date.now()) { // 10 dakikadan az süre geçmişse
             return res.status(202).json({
                 status: 202,
                 message: "message_sendResetPasswordCode_202"
@@ -318,37 +259,9 @@ exports.checkResetPasswordCode = async (req, res) => {
     return res.json(response);
 }
 
-exports.userNotifications = async (req, res) => {
+exports.userNotifications = async (req, res) => { // Kullanıcının bildirimlerini getirme işlemi
     const user = await User.findOne({ token: req.body.data.token }).populate('notifications')
-    let notifications = []
-    if (user.language == "ar") {
-        notifications = user.notifications.map((notification) => {
-            return {
-                message: notification.message.ar,
-                date: notification.date,
-                type: notification.type
-            }
-        })
-    }
-    else if (user.language == "de") {
-        notifications = user.notifications.map((notification) => {
-            return {
-                message: notification.message.en,
-                date: notification.date,
-                type: notification.type
-            }
-        })
-    }
-    else {
-        notifications = user.notifications.map((notification) => {
-            return {
-                message: notification.message.en,
-                date: notification.date,
-                type: notification.type
-            }
-        })
-    }
-
+    const notifications = user.notifications
     const response = {
         status: 200,
         data: notifications,
