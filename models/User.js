@@ -58,14 +58,24 @@ const UserSchema = new Schema({
     resetPasswordCodeSendDate: {
         type: Date,
     },
-    interestWorkshop: [{ 
+    //Kullanıcının ilgi alanlarınaı işlemek için kullanılacak olan veriler
+    myWatchVideos: [{  // Kullanıcının izlediği son videolar (15 adet obje tutulacak)
         type: Schema.Types.ObjectId,
-        ref: 'Comunity',
-    }],
-    interestSkillHubPosts: [{
+        ref: 'Video',
+    }], 
+    likedShortVideos: [{ // Kullanıcının beğendiği kısa videolar (100 adet obje tutulacak)
         type: Schema.Types.ObjectId,
-        ref: 'SkillHubPost',
+        ref: 'ShortVideo',
     }],
+    clickGoToVideoInShortVideos: [{ // Kullanıcının kısa videolardan videoya gittiği videolar (15 adet obje tutulacak)
+        type: Schema.Types.ObjectId,
+        ref: 'ShortVideo',
+    }],
+    saveShortVideo: [{ // Kullanıcının kayıt ettiği son short videolar (20 adet obje tutulacak)
+        type: Schema.Types.ObjectId,
+        ref: 'ShortVideo',
+    }],
+
 });
 
 const User = mongoose.model("User", UserSchema);

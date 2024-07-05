@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VideoSchema = new Schema({ 
+const ShortVideoSchema = new Schema({ 
     actieve: { // atölye videoyu atif pasif yapabilir
         type: Boolean,
     },
-    video: { // dyntube gömme video
+    shortVideo: { // dyntube gömme video
         type: String,
+    },
+    video: { // shortVideonun alındığı video id si
+        type: Schema.Types.ObjectId,
+        ref: 'Video',
     },
     name: {
         type: String,
@@ -23,8 +27,8 @@ const VideoSchema = new Schema({
     },
     category: {
         type: String,
-    },
+    }
 });
 
-const Video = mongoose.model("Video", VideoSchema);
-module.exports = Video; 
+const ShortVideo = mongoose.model("ShortVideo", ShortVideoSchema);
+module.exports = ShortVideo; 
